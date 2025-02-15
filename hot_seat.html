@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Backgammon</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='gra.css')}}">
+</head>
+<body>
+    <h1>Welcome to Backgammon</h1>
+    <h2>Hot-seat mode</h2>
+    <a href="vsAI.html">Play vs AI</a><br>
+    <a href="multiplayer.html">Multiplayer</a>
+
+    <div class="game-wrapper">
+        <!-- Plansza Backgammon -->
+        <div class="board">
+          <!-- Top row: punkty 24 do 13 -->
+          <div class="row top-row">
+            <!-- Punkt 24: 2 białe pionki -->
+            <div class="point" data-position="24">
+              <div class="triangle" id="point-1"></div>
+              <div class="piece white" data-position="24"></div>
+              <div class="piece white" data-position="24"></div>
+            </div>
+            <!-- Punkt 23: pusty -->
+            <div class="point" data-position="23">
+              <div class="triangle" id="point-2"></div>
+            </div>
+            <!-- Punkt 22: pusty -->
+            <div class="point" data-position="22">
+              <div class="triangle" id="point-3"></div>
+            </div>
+            <!-- Punkt 21: pusty -->
+            <div class="point" data-position="21">
+              <div class="triangle" id="point-4"></div>
+            </div>
+            <!-- Punkt 20: pusty -->
+            <div class="point" data-position="20">
+              <div class="triangle" id="point-5"></div>
+            </div>
+            <!-- Punkt 19: 5 czarnych pionków -->
+            <div class="point" data-position="19">
+              <div class="triangle" id="point-6"></div>
+              <div class="piece black" data-position="19"></div>
+              <div class="piece black" data-position="19"></div>
+              <div class="piece black" data-position="19"></div>
+              <div class="piece black" data-position="19"></div>
+              <div class="piece black" data-position="19"></div>
+            </div>
+            <!-- Punkt 18: pusty -->
+            <div class="point" data-position="18">
+              <div class="triangle" id="point-7"></div>
+            </div>
+            <!-- Punkt 17: 3 czarne pionki -->
+            <div class="point" data-position="17">
+              <div class="triangle" id="point-8"></div>
+              <div class="piece black" data-position="17"></div>
+              <div class="piece black" data-position="17"></div>
+              <div class="piece black" data-position="17"></div>
+            </div>
+            <!-- Punkt 16: pusty -->
+            <div class="point" data-position="16">
+              <div class="triangle" id="point-9"></div>
+            </div>
+            <!-- Punkt 15: pusty -->
+            <div class="point" data-position="15">
+              <div class="triangle" id="point-10"></div>
+            </div>
+            <!-- Punkt 14: pusty -->
+            <div class="point" data-position="14">
+              <div class="triangle" id="point-11"></div>
+            </div>
+            <!-- Punkt 13: 5 białych pionków -->
+            <div class="point" data-position="13">
+              <div class="triangle" id="point-12"></div>
+              <div class="piece white" data-position="13"></div>
+              <div class="piece white" data-position="13"></div>
+              <div class="piece white" data-position="13"></div>
+              <div class="piece white" data-position="13"></div>
+              <div class="piece white" data-position="13"></div>
+            </div>
+          </div>
+          
+          <div class="divider"></div>
+          
+          <!-- Bottom row: punkty 12 do 1 (obracany o 180°) -->
+          <div class="row bottom-row">
+            <!-- Punkt 12: 5 czarnych pionków -->
+            <div class="point" data-position="12">
+              <div class="triangle" id="point-13"></div>
+              <div class="bottom-pieces">
+                <div class="piece black" data-position="12"></div>
+                <div class="piece black" data-position="12"></div>
+                <div class="piece black" data-position="12"></div>
+                <div class="piece black" data-position="12"></div>
+                <div class="piece black" data-position="12"></div>
+              </div>
+            </div>
+            <!-- Punkt 11: pusty -->
+            <div class="point" data-position="11">
+              <div class="triangle" id="point-14"></div>
+            </div>
+            <!-- Punkt 10: pusty -->
+            <div class="point" data-position="10">
+              <div class="triangle" id="point-15"></div>
+            </div>
+            <!-- Punkt 9: pusty -->
+            <div class="point" data-position="9">
+              <div class="triangle" id="point-16"></div>
+            </div>
+            <!-- Punkt 8: 3 białe pionki -->
+            <div class="point" data-position="8">
+              <div class="triangle" id="point-17"></div>
+              <div class="bottom-pieces">
+                <div class="piece white" data-position="8"></div>
+                <div class="piece white" data-position="8"></div>
+                <div class="piece white" data-position="8"></div>
+              </div>
+            </div>
+            <!-- Punkt 7: pusty -->
+            <div class="point" data-position="7">
+              <div class="triangle" id="point-18"></div>
+            </div>
+            <!-- Punkt 6: 5 białych pionków -->
+            <div class="point" data-position="6">
+              <div class="triangle" id="point-19"></div>
+              <div class="bottom-pieces">
+                <div class="piece white" data-position="6"></div>
+                <div class="piece white" data-position="6"></div>
+                <div class="piece white" data-position="6"></div>
+                <div class="piece white" data-position="6"></div>
+                <div class="piece white" data-position="6"></div>
+              </div>
+            </div>
+            <!-- Punkt 5: pusty -->
+            <div class="point" data-position="5">
+              <div class="triangle" id="point-20"></div>
+            </div>
+            <!-- Punkt 4: pusty -->
+            <div class="point" data-position="4">
+              <div class="triangle" id="point-21"></div>
+            </div>
+            <!-- Punkt 3: pusty -->
+            <div class="point" data-position="3">
+              <div class="triangle" id="point-22"></div>
+            </div>
+            <!-- Punkt 2: pusty -->
+            <div class="point" data-position="2">
+              <div class="triangle" id="point-23"></div>
+            </div>
+            <!-- Punkt 1: 2 czarne pionki -->
+            <div class="point" data-position="1">
+              <div class="triangle" id="point-24"></div>
+              <div class="bottom-pieces">
+                <div class="piece black" data-position="1"></div>
+                <div class="piece black" data-position="1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Kostki (dice) obok planszy -->
+        <div class="dice-container">
+          <div class="dice" id="die1">1</div>
+          <div class="dice" id="die2">6</div>
+        </div>
+      </div>
+      
+      <script>
+        console.log('Skrypt JavaScript został wczytany');
+      
+        // Deklaracja globalnych zmiennych
+        let selectedPiece = null;
+        let selectedPoint = null;
+        let currentPlayer = "A"; // Na początku ruch ma gracz A
+        let availableMoves = []; // Dostępne wartości ruchu (pojedyncze kostki)
+        let dice1 = 0, dice2 = 0; // Globalne wartości kostek
+      
+        document.addEventListener('DOMContentLoaded', () => {
+          console.log('Skrypt JavaScript został wczytany');
+      
+          // Obsługa kliknięć na kostkach: losowanie obu kostek i ustawienie dostępnych ruchów
+          document.querySelectorAll('.dice').forEach(die => {
+            die.addEventListener('click', () => {
+              dice1 = Math.floor(Math.random() * 6) + 1;
+              dice2 = Math.floor(Math.random() * 6) + 1;
+              document.getElementById("die1").textContent = dice1;
+              document.getElementById("die2").textContent = dice2;
+              availableMoves = [dice1, dice2, dice1 + dice2]; // umożliwiamy też ruch łączny
+              console.log('Nowe wartości kostek: ' + dice1 + ', ' + dice2 + ' (dostępne ruchy: ' + availableMoves.join(', ') + ')');
+            });
+          });
+      
+          // Obsługa kliknięć na pionkach: wybór pionka do przesunięcia
+          document.querySelectorAll('.piece').forEach(piece => {
+            piece.addEventListener('click', (e) => {
+              e.stopPropagation();
+              const pointElem = piece.closest('.point');
+              selectedPoint = parseInt(pointElem.getAttribute('data-position'));
+              // Podświetlamy zaznaczony punkt
+              document.querySelectorAll('.point').forEach(p => p.classList.remove('selected'));
+              pointElem.classList.add('selected');
+              selectedPiece = piece;
+              console.log('Wybrano pionek z punktu: ' + selectedPoint);
+            });
+          });
+      
+          // Obsługa kliknięć na punktach: wybór docelowego punktu
+          document.querySelectorAll('.point').forEach(point => {
+            point.addEventListener('click', () => {
+              const dest = parseInt(point.getAttribute('data-position'));
+              if (selectedPiece === null || selectedPoint === null) {
+                console.log('Najpierw wybierz pionek do przesunięcia.');
+                return;
+              }
+              
+              // Walidacja ruchu: pionki powinny poruszać się w obrębie tego samego rzędu,
+              // chyba że wykonują ruch przechodzący przez granicę między dolnym a górnym rzędem.
+              // Przyjmujemy, że punkty 1-12 to dolny rząd, a 13-24 to górny rząd.
+              if ((selectedPoint <= 12 && dest > 12) || (selectedPoint > 12 && dest <= 12)) {
+                // Pozwalamy tylko ruch pomiędzy punktami 13 i 12 (przejście między rzędami)
+                if (!((selectedPoint === 13 && dest === 12) || (selectedPoint === 12 && dest === 13))) {
+                  alert("Ruch między rzędami dozwolony tylko przy granicy (punkt 13 i 12).");
+                  return;
+                }
+              }
+              
+              // Obliczamy wartość ruchu jako różnicę między punktami
+              let move_value = Math.abs(selectedPoint - dest);
+              console.log('Obliczona wartość ruchu: ' + move_value);
+              
+              // Sprawdzamy, czy obliczona wartość ruchu znajduje się w dostępnych ruchach
+              if (!availableMoves.includes(move_value)) {
+                alert("Ruch nie odpowiada dostępnych wartościom kostek: " + availableMoves.join(", "));
+                return;
+              }
+              
+              console.log('Pozostałe dostępne ruchy przed wykonaniem: ' + availableMoves.join(", "));
+              console.log('Próba ruchu z punktu ' + selectedPoint + ' do punktu ' + dest + ' (wartość: ' + move_value + ')');
+            
+              // Wysyłamy żądanie AJAX do endpointu /move
+              fetch('/move', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ start: selectedPoint, end: dest, player: currentPlayer, move_value: move_value })
+              })
+              .then(response => response.json())
+              .then(data => {
+                alert(data.message);
+                // Animujemy ruch pionka
+                movePiece(selectedPiece, point);
+                // Aktualizujemy dostępne ruchy: usuwamy użytą wartość
+                if (move_value === (dice1 + dice2)) {
+                  availableMoves = [];
+                } else if (availableMoves.includes(move_value)) {
+                  const idx = availableMoves.indexOf(move_value);
+                  availableMoves.splice(idx, 1);
+                }
+                console.log('Pozostałe dostępne ruchy po wykonaniu: ' + availableMoves.join(", "));
+                // Resetujemy zaznaczenie, jeśli ruchy zostały wyczerpane
+                if (availableMoves.length === 0) {
+                  alert("Tura zakończona.");
+                  // Tutaj możesz dodać logikę zmiany gracza lub ponowne losowanie kostek
+                }
+                selectedPiece = null;
+                selectedPoint = null;
+                document.querySelectorAll('.point').forEach(p => p.classList.remove('selected'));
+              })
+              .catch(err => console.error('Błąd:', err));
+            });
+          });
+        });
+      
+        // Funkcja do animowanego przenoszenia pionka
+        function movePiece(piece, targetPoint) {
+          const rect1 = piece.getBoundingClientRect();
+          const rect2 = targetPoint.getBoundingClientRect();
+      
+          const deltaX = rect2.left - rect1.left;
+          const deltaY = rect2.top - rect1.top;
+      
+          piece.style.transition = 'transform 0.3s ease-in-out';
+          piece.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+      
+          setTimeout(() => {
+            targetPoint.appendChild(piece);
+            piece.style.transition = '';
+            piece.style.transform = '';
+            piece.dataset.position = targetPoint.getAttribute('data-position');
+          }, 300);
+        }
+      </script>
+      
+      
+      
+    </body>
+    </html>

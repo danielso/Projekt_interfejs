@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Witaj w grze Backgammon</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='start.css') }}">
+  
+</head>
+<body>
+  <div class="start-wrapper">
+    <h1>Witaj w grze Backgammon</h1>
+    <div class="rules">
+      <h2>Zasady gry</h2>
+      <p>
+        Gra odbywa się na planszy podzielonej na 24 pola, z których każde zawiera określoną liczbę pionków. 
+        Każdy z graczy otrzymuje 15 pionków w swoim kolorze. Gra wykorzystuje dwie kostki, a ruch pionków zależy od wyrzuconej liczby oczek. 
+        Ruch może polegać na przesunięciu jednego pionka o sumę obu kostek lub na rozdzieleniu ruchu na dwa pionki – po jednym dla każdej kostki.
+      </p>
+      <p>
+        Pionki mogą być przemieszczane tylko na pola, które są wolne, zajęte przez pionki gracza wykonującego ruch lub zawierają tylko jeden pionek przeciwnika, który zostanie zbity.
+        Jeśli pole jest zajęte przez dwa lub więcej pionków przeciwnika, ruch na takie pole jest zablokowany.
+      </p>
+      <p>
+        Gra kończy się, gdy jeden z graczy umieści wszystkie swoje pionki w swojej bazie i ściągnie je z planszy.
+      </p>
+    </div>
+    <a class="start-button" href="{{ url_for('hot_seat') }}">START</a>
+  </div>
+</body>
+</html>

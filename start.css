@@ -1,0 +1,28 @@
+.start-wrapper {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      text-align: left;
+      background-color: #f4f4f4;
+      border: 2px solid #8b4513;
+      border-radius: 10px;
+    }
+    .start-wrapper h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .rules {
+      margin-bottom: 30px;
+    }
+    .start-button {
+      display: block;
+      width: 200px;
+      padding: 10px;
+      margin: 0 auto;
+      background-color: #8b4513;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 18px;
+    }
