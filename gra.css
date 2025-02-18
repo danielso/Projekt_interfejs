@@ -1,161 +1,168 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-  }
-  
-  h1, h2 {
-    margin: 10px 0;
-  }
-  
-  /* Opakowanie gry: plansza + kostki */
-  .game-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 40px;
-    margin-top: 20px;
-  }
-  
-  /* Styl planszy */
-  .board {
-    position: relative;
-    width: 800px;
-    height: 500px;
-    background-color: #d2b48c;
-    border: 5px solid #8b4513;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-  
-  /* Wiersze planszy */
-  .row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    position: relative;
-  }
-  
-  /* Bottom row – obracamy o 180° aby zachować właściwą orientację punktów */
-  .bottom-row {
-    transform: rotate(180deg);
-  }
-  
-  /* Kontener pojedynczego punktu (trójkąt + pionki) */
-  .point {
-    position: relative;
-    width: 12.5%;
-    height: 200px;
-  }
-  
-  /* Rysowanie trójkąta – element .triangle jest pusty, a jego pseudo-element ::before tworzy kształt */
-  .triangle {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: none;
-    border: 1px solid #333;
-  }
-  
-  .triangle::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #f9c74f;
-    clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
-    z-index: 1;
-  }
-  
-  /* Co drugi punkt – zmiana koloru trójkąta */
-  .row.top-row .point:nth-child(even) .triangle::before,
-  .row.bottom-row .point:nth-child(even) .triangle::before {
-    background-color: #f94144;
-  }
-  
-  /* Styl pionków */
-  .piece {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    z-index: 2; /* nad trójkątem */
-    left: 50%;
-    transform: translateX(-50%);
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  .piece.black {
-    background-color: black;
-  }
-  
-  .piece.white {
-    background-color: white;
-  }
-  
-  /* Pozycjonowanie pionków w top-row:
-     W obrębie kontenera .point pierwszy element to .triangle, a kolejne (od drugiego) to pionki.
-     Każdy pionek jest przesunięty o 40px względem poprzedniego.
-     Przykładowo:
-       - Jeśli mamy 2 pionki, pierwszy: top: 0, drugi: top: 40px.
-       - Jeśli 5 pionków, ustawienie: 0, 40px, 80px, 120px, 160px.
-  */
-  .row.top-row .point .piece:nth-of-type(2) { top: 0; }
-  .row.top-row .point .piece:nth-of-type(3) { top: 40px; }
-  .row.top-row .point .piece:nth-of-type(4) { top: 80px; }
-  .row.top-row .point .piece:nth-of-type(5) { top: 120px; }
-  .row.top-row .point .piece:nth-of-type(6) { top: 160px; }
-  
-  /* Dla bottom-row: Pionki umieszczone są w opakowaniu .bottom-pieces */
-  .row.bottom-row .point .bottom-pieces {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-  
-  /* Wewnątrz .bottom-pieces pionki ułożone są z odstępem 40px – używamy właściwości top */
-  .row.bottom-row .point .bottom-pieces .piece:nth-child(1) { top: 0; }
-  .row.bottom-row .point .bottom-pieces .piece:nth-child(2) { top: 40px; }
-  .row.bottom-row .point .bottom-pieces .piece:nth-child(3) { top: 80px; }
-  .row.bottom-row .point .bottom-pieces .piece:nth-child(4) { top: 120px; }
-  .row.bottom-row .point .bottom-pieces .piece:nth-child(5) { top: 160px; }
-  .row.bottom-row .point .bottom-pieces .piece:nth-child(6) { top: 200px; }
-  
-  /* Podziałka (bar) w środku planszy */
-  .divider {
-    position: absolute;
-    width: 10px;
-    height: 100%;
-    background-color: #0d0d0e;
-    left: 50%;
-    top: 0;
-    transform: translateX(-50%);
-    z-index: 0;
-  }
-  
-  /* Kostki (dice) – kontener kostek umieszczony obok planszy */
-  .dice-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-  }
-  
-  .dice {
-    width: 60px;
-    height: 60px;
-    border: 2px solid #333;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    font-size: 24px;
-    font-weight: bold;
-  }
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2 {
+  margin: 10px 0;
+}
+
+h3 {
+  padding-bottom: 25px;
+}
+
+/* Opakowanie gry: plansza + kostki */
+.game-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Styl planszy */
+.board {
+  position: relative;
+  width: 900px;
+  height: 452px;
+  background-color: #d2b48c;
+  border: 5px solid #8b4513;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Wiersze planszy */
+.row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+}
+
+/* Bottom row – obracamy o 180° aby zachować właściwą orientację punktów */
+.bottom-row {
+  transform: rotate(180deg);
+  margin-bottom: 10px;
+}
+
+/* Kontener pojedynczego punktu (trójkąt + pionki) */
+.point {
+  position: relative;
+  width: 11%;
+  height: 200px;
+}
+
+/* Rysowanie trójkąta – element .triangle jest pusty, a jego pseudo-element ::before tworzy kształt */
+.triangle {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: 0px solid #333;
+}
+
+.triangle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f9c74f;
+  clip-path: polygon(50% 85%, 0% 0%, 100% 0%);
+}
+
+/* Co drugi punkt – zmiana koloru trójkąta */
+.row.top-row .point:nth-child(even) .triangle::before,
+.row.bottom-row .point:nth-child(even) .triangle::before {
+  background-color: #f94144;
+}
+
+/* Styl pionków */
+.piece {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  z-index: 2; /* nad trójkątem */
+  left: 50%;
+  transform: translateX(-50%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.piece.black {
+  background-color: black;
+}
+
+.piece.white {
+  background-color: white;
+}
+
+/* Pozycjonowanie pionków w top-row: */
+.row.top-row .point .piece:nth-of-type(2) { top: 18px; }
+.row.top-row .point .piece:nth-of-type(3) { top: 52px; }
+.row.top-row .point .piece:nth-of-type(4) { top: 86px; }
+.row.top-row .point .piece:nth-of-type(5) { top: 120px; }
+.row.top-row .point .piece:nth-of-type(6) { top: 154px; }
+
+/* Dla bottom-row: Pionki umieszczone są w opakowaniu .bottom-pieces */
+.row.bottom-row .point .bottom-pieces {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Wewnątrz .bottom-pieces pionki ułożone są z odstępem 34px – używamy właściwości top */
+.row.bottom-row .point .bottom-pieces .piece:nth-child(1) { top: 18px; }
+.row.bottom-row .point .bottom-pieces .piece:nth-child(2) { top: 52px; }
+.row.bottom-row .point .bottom-pieces .piece:nth-child(3) { top: 86px; }
+.row.bottom-row .point .bottom-pieces .piece:nth-child(4) { top: 120px; }
+.row.bottom-row .point .bottom-pieces .piece:nth-child(5) { top: 154px; }
+.row.bottom-row .point .bottom-pieces .piece:nth-child(6) { top: 188px; }
+
+/* Podziałka (bar) w środku planszy */
+.divider {
+  position: absolute;
+  width: 10px;
+  height: 100%;
+  background-color: #0d0d0e;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+/* Kostki (dice) – kontener kostek umieszczony obok planszy */
+.dice-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.bok{
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 90px;
+  align-items: center;
+}
+
+.dice {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #333;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  font-size: 24px;
+  font-weight: bold;
+}

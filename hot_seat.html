@@ -211,34 +211,57 @@
             </div>
           </div>
         </div>
-        
+        <div class="bok">
         <!-- Kostki (dice) obok planszy -->
+         <div>home1</div>
         <div class="dice-container">
           <div class="dice" id="die1">1</div>
           <div class="dice" id="die2">6</div>
+          <h2 id="turn-indicator">Tura gracza: 1 (Białe)</h2>
         </div>
+        <div>home2</div>
+      </div>
       </div>
       
       <script>
-        document.addEventListener('DOMContentLoaded', () => {
+
+     document.addEventListener('DOMContentLoaded', () => {
     console.log('Skrypt JavaScript został wczytany');
+    
 
     let selectedPiece = null;
     let selectedPoint = null;
     let currentPlayer = "1"; // Player 1 starts
     let availableMoves = [];
     let dice1 = 0, dice2 = 0;
+    let diceRolled = false;
+
+    updateTurnIndicator(currentPlayer);
 
     document.querySelectorAll('.dice').forEach(die => {
-        die.addEventListener('click', () => {
-            dice1 = Math.floor(Math.random() * 6) + 1;
-            dice2 = Math.floor(Math.random() * 6) + 1;
-            document.getElementById("die1").textContent = dice1;
-            document.getElementById("die2").textContent = dice2;
-            availableMoves = [dice1, dice2, dice1 + dice2];
-            console.log(`Nowe wartości kostek: ${dice1}, ${dice2} (dostępne ruchy: ${availableMoves.join(', ')})`);
-        });
+    die.addEventListener('click', () => {
+        if (diceRolled) {
+            alert("Możesz rzucić kostką tylko raz na turę!");
+            return;
+        }
+
+        // **Fetch new dice values from the server**
+        fetch('/roll-dice', { method: "POST" })
+            .then(response => response.json())
+            .then(data => {
+                dice1 = data.dice1;
+                dice2 = data.dice2;
+                document.getElementById("die1").textContent = dice1;
+                document.getElementById("die2").textContent = dice2;
+                availableMoves = [dice1, dice2, dice1 + dice2];
+
+                diceRolled = true; // **Now dice can't be rolled again this turn**
+                console.log(`Gracz ${currentPlayer} rzucił: ${dice1}, ${dice2} (dostępne ruchy: ${availableMoves.join(', ')})`);
+            })
+            .catch(error => console.error("Błąd podczas pobierania rzutów kostką:", error));
     });
+});
+
 
     // Selecting a piece to move
     document.querySelectorAll('.piece').forEach(piece => {
@@ -290,14 +313,23 @@
         const bottomPiecesContainer = point.querySelector('.bottom-pieces');
         const targetContainer = bottomPiecesContainer ? bottomPiecesContainer : point;
 
-        // **Check if there's a single opponent piece (capture condition)**
+        // **Check if the target has 2+ opponent pieces (blocked)**
         const existingPieces = targetContainer.querySelectorAll('.piece');
+        if (existingPieces.length >= 2) {
+            const existingPieceColor = existingPieces[0].classList.contains('white') ? "1" : "2";
+            
+            if (existingPieceColor !== pieceColor) {
+                alert("Nie możesz wejść na pole, gdzie przeciwnik ma 2 lub więcej pionków!");
+                return;
+            }
+        }
+
+        // **Check if there's a single opponent piece (capture condition)**
         if (existingPieces.length === 1) {
             const existingPiece = existingPieces[0];
             const existingPieceColor = existingPiece.classList.contains('white') ? "1" : "2";
 
             if (existingPieceColor !== pieceColor) {
-                // **Capture the opponent's piece**
                 alert("Złapano pionek przeciwnika!");
                 sendPieceToCapturedArea(existingPiece);
             }
@@ -316,11 +348,11 @@
         if (availableMoves.includes(dice1 + dice2) && move_value == (dice1 + dice2)) {
             availableMoves = availableMoves.filter(value => value == (dice1 + dice2));
         }
-
+        
         fetch('/move', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ start: selectedPoint, end: dest, player: currentPlayer, move_value: move_value })
+            body: JSON.stringify({ start: selectedPoint, end: dest, player: currentPlayer, move_value: move_value, dice1Python: dice1, dice2Python: dice2 })
         })
         .then(response => response.json())
         .then(data => {
@@ -335,6 +367,8 @@
             if (availableMoves.length === 0) {
                 alert(`Tura gracza ${currentPlayer} zakończona.`);
                 currentPlayer = currentPlayer === "1" ? "2" : "1";
+                diceRolled = false;
+                updateTurnIndicator(currentPlayer);
                 alert(`Teraz ruch ma gracz ${currentPlayer}`);
             }
 
@@ -345,6 +379,7 @@
         .catch(err => console.error('Błąd:', err));
     });
 });
+
 
 // **Function to send captured piece to the captured area**
 function sendPieceToCapturedArea(piece) {
@@ -376,7 +411,15 @@ function movePiece(piece, targetPoint) {
         piece.dataset.position = targetPoint.getAttribute('data-position');
     }, 300);
 }
-
+function updateTurnIndicator(currentPlayer) {
+    const turnIndicator = document.getElementById("turn-indicator");
+    if (currentPlayer === "1") {
+        turnIndicator.textContent = "Tura gracza: 1 (Białe)";
+    } else {
+        turnIndicator.textContent = "Tura gracza: 2 (Czarne)";
+    }
+}
+   
 
       </script>
       
