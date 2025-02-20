@@ -6,12 +6,15 @@
     <link rel="stylesheet" href="{{url_for('static', filename='gra.css')}}">
 </head>
 <body>
-    <h1>Welcome to Backgammon</h1>
     <h2>Hot-seat mode</h2>
-    <a href="vsAI.html">Play vs AI</a><br>
-    <a href="multiplayer.html">Multiplayer</a>
+    <button id="end-turn-btn">Zakończ turę</button>
     <div id="captured-pieces" class="captured-area">
       <h3>Captured Pieces</h3>
+  </div>
+  <div class="dice-container">
+    <div class="dice" id="die1">1</div>
+    <div class="dice" id="die2">6</div>
+    <h3 id="turn-indicator">Tura gracza: 1 (Białe)</h3>
   </div>
   
     <div class="game-wrapper">
@@ -213,13 +216,12 @@
         </div>
         <div class="bok">
         <!-- Kostki (dice) obok planszy -->
-         <div>home1</div>
-        <div class="dice-container">
-          <div class="dice" id="die1">1</div>
-          <div class="dice" id="die2">6</div>
-          <h2 id="turn-indicator">Tura gracza: 1 (Białe)</h2>
+         <div id="home1" class = "home-area">
+          <h3>Dom gracza 2</h3>
         </div>
-        <div>home2</div>
+        <div id="home2" class = "home-area">
+          <h3>Dom gracza 1</h3>
+        </div>
       </div>
       </div>
       
@@ -237,6 +239,108 @@
     let diceRolled = false;
 
     updateTurnIndicator(currentPlayer);
+
+     // **Add Click Event for Home Areas**
+     document.getElementById("home2").addEventListener("click", () => {
+        if (currentPlayer !== "1") {
+            alert("To nie jest twój dom!");
+            return;
+        }
+        attemptBearOff("1");
+    });
+
+    document.getElementById("home1").addEventListener("click", () => {
+        if (currentPlayer !== "2") {
+            alert("To nie jest twój dom!");
+            return;
+        }
+        attemptBearOff("2");
+    });
+
+     // **End Turn Button**
+     document.getElementById("end-turn-btn").addEventListener("click", () => {
+        alert(`Gracz ${currentPlayer} zakończył swoją turę.`);
+        switchTurn(); // **Switch player turn**
+    });
+
+    // **Function to Handle Bearing Off**
+    function attemptBearOff(player) {
+    if (!player) {
+        console.error("Błąd: player jest niezdefiniowany!");
+        return;
+    }
+
+    let homeArea = document.getElementById(player === "1" ? "home2" : "home1");
+    let homeStart = player === "1" ? 1 : 19;
+    let homeEnd = player === "1" ? 6 : 24;
+
+    // **Check if all pieces are in the home area**
+    let allPiecesHome = true;
+    document.querySelectorAll('.piece').forEach(piece => {
+        let pieceColor = piece.classList.contains('white') ? "1" : "2";
+        let position = parseInt(piece.dataset.position);
+
+        if (pieceColor === player && (position < homeStart || position > homeEnd)) {
+            allPiecesHome = false;
+        }
+    });
+
+    if (!allPiecesHome) {
+        alert("Nie możesz jeszcze usuwać pionków! Wszystkie twoje pionki muszą być w strefie domu.");
+        return;
+    }
+
+    if (!selectedPiece) {
+        alert("Wybierz pionek, który chcesz usunąć do domu!");
+        return;
+    }
+
+    let pieceColor = selectedPiece.classList.contains("white") ? "1" : "2";
+    if (pieceColor !== player) {
+        alert("Nie możesz usunąć pionka przeciwnika!");
+        return;
+    }
+
+    let piecePosition = parseInt(selectedPiece.dataset.position);
+    let move_value = homeEnd - piecePosition; // Calculate how far the piece moves off the board
+
+    if (!availableMoves.includes(move_value)) {
+        // **Allow bearing off if no exact dice match, but only from the highest position**
+        let maxAvailableMove = Math.max(...availableMoves);
+        if (piecePosition === homeStart && maxAvailableMove > piecePosition) {
+            move_value = maxAvailableMove;
+        } else {
+            alert(`Musisz użyć kości, aby zdjąć pionek z pozycji ${piecePosition}!`);
+            return;
+        }
+    }
+
+    // **Remove the used move from availableMoves**
+    availableMoves.splice(availableMoves.indexOf(move_value), 1);
+
+    // **Count as a move**
+    moveCount++;
+
+    // **Move piece to home area visually**
+    let pieceCount = homeArea.querySelectorAll('.piece').length;
+    let offsetX = (pieceCount % 5) * 30;
+    let offsetY = Math.floor(pieceCount / 5) * 30;
+
+    selectedPiece.style.position = "absolute";
+    selectedPiece.style.left = `${offsetX}px`;
+    selectedPiece.style.top = `${offsetY}px`;
+
+    homeArea.appendChild(selectedPiece);
+    selectedPiece.dataset.position = "home";
+
+    alert(`Gracz ${player} usunął pionek do domu!`);
+
+    selectedPiece = null;
+
+    // **Check if turn should end**
+    checkTurnEnd();
+}
+
 
     document.querySelectorAll('.dice').forEach(die => {
     die.addEventListener('click', () => {
@@ -262,24 +366,137 @@
     });
 });
 
+// **Switch Turn Function**
+function switchTurn() {
+        currentPlayer = currentPlayer === "1" ? "2" : "1";
+        diceRolled = false;
+        availableMoves = [];
+        updateTurnIndicator(currentPlayer);
+        alert(`Teraz ruch ma gracz ${currentPlayer}`);
+    }
+
+    function attemptReEntry() {
+    let capturedPieces = document.querySelectorAll(`#captured-pieces .piece.${currentPlayer === "1" ? "white" : "black"}`);
+
+    if (capturedPieces.length === 0) {
+        return; // No captured pieces, player can move normally
+    }
+
+
+
+    let entryPoints = currentPlayer === "2" ? [dice1, dice2] : [25 - dice1, 25 - dice2]; // Convert dice rolls to opponent's home board positions
+let validPoints = [];
+
+for (let entryPoint of entryPoints) {
+    let targetPoint = document.querySelector(`.point[data-position="${entryPoint}"]`);
+    if (!targetPoint) continue; // Skip if invalid
+
+    // **Check if there's a `.bottom-pieces` container inside**
+    let bottomContainer = targetPoint.querySelector(".bottom-pieces");
+    let finalTarget = bottomContainer ? bottomContainer : targetPoint; // Use bottom-pieces if it exists
+
+    let piecesAtTarget = finalTarget.querySelectorAll(".piece");
+
+    // **Check if spot is completely empty**
+    if (piecesAtTarget.length === 0) {
+        validPoints.push(finalTarget); // Add as a valid placement spot
+    }
+}
+
+if (validPoints.length === 0) {
+    alert("Nie można wprowadzić pionka, wszystkie wejścia są zajęte. Tura przepada.");
+    switchTurn();
+    return;
+}
+
+// **Allow player to click on a captured piece to place it**
+capturedPieces.forEach(piece => {
+    piece.addEventListener("click", () => {
+        
+        let selectedPiece = piece;
+
+        // **Highlight valid points**
+        validPoints.forEach(point => {
+            point.classList.add("highlight"); // Add a highlight class to show valid moves
+            point.addEventListener("click", () => {
+                // **Move piece to selected point**
+                point.appendChild(selectedPiece);
+                selectedPiece.dataset.position = point.closest(".point").getAttribute("data-position"); // Get correct position
+
+                // **Remove highlight**
+                validPoints.forEach(p => p.classList.remove("highlight"));
+
+                // **Remove the used move from availableMoves**
+                let moveUsed = Math.abs(parseInt(point.closest(".point").getAttribute("data-position")) - (currentPlayer === "1" ? 1 : 24));
+                let moveIndex = availableMoves.indexOf(moveUsed);
+                if (moveIndex !== -1) availableMoves.splice(moveIndex, 1);
+
+                // **Check if turn should end**
+                if (capturedPieces.length - 1 === 0 && availableMoves.length === 0) {
+                    switchTurn();
+                }
+            }, { once: true }); // Make sure it only triggers once
+        });
+    }, { once: true }); // Ensure each captured piece is clickable only once
+});
+
+}
+
 
     // Selecting a piece to move
+    let player = currentPlayer; 
+    let homeStart = player === "1" ? 1 : 19;
+    let homeEnd = player === "1" ? 6 : 24;
+    
+
+    let allPiecesHome = true;
     document.querySelectorAll('.piece').forEach(piece => {
+      let pieceColor = piece.classList.contains('white') ? "1" : "2";
+      let position = parseInt(piece.dataset.position);
+
+      if (pieceColor === player && (position < homeStart || position > homeEnd)){
+        allPiecesHome = false;
+      }
+
         piece.addEventListener('click', (e) => {
             e.stopPropagation();
             
             const pieceColor = piece.classList.contains('white') ? "1" : "2";
+
+             // **Check if the clicked piece is in the captured area**
+        let isCaptured = piece.closest("#captured-pieces") !== null;
             
             if (pieceColor !== currentPlayer) {
                 alert("Nie możesz ruszyć pionka przeciwnika!");
                 return;
             }
 
+            //**Check if the player has captured pieces
+            let capturedPieces = document.querySelectorAll(`#captured-pieces .piece.${currentPlayer === "1" ? "white" : "black"}`);
+            if (isCaptured) {
+            attemptReEntry();
+            return; // Allow re-entry, block all other moves
+            }
+
+            if (capturedPieces.length > 0) {
+            alert("Musisz najpierw wyprowadzić pionek z pola zbitych!");
+            return;
+            }
+            
+
             const pointElem = piece.closest('.point');
-            selectedPoint = parseInt(pointElem.getAttribute('data-position'));
+            if (!pointElem){
+              console.error("Błąd: Nie można znależć punktu dla pionka")
+              return;
+            }
+
+            
+
             
             document.querySelectorAll('.point').forEach(p => p.classList.remove('selected'));
             pointElem.classList.add('selected');
+            
+            selectedPoint = parseInt(pointElem.getAttribute('data-position'));
             selectedPiece = piece;
             console.log(`Gracz ${currentPlayer} wybrał pionek z punktu: ${selectedPoint}`);
         });
@@ -304,18 +521,36 @@
 
         const pieceColor = selectedPiece.classList.contains('white') ? "1" : "2";
 
-        // **Check movement direction**
-        if ((pieceColor === "1" && dest >= selectedPoint) || (pieceColor === "2" && dest <= selectedPoint)) {
-            alert("Nie możesz przesunąć pionka w tym kierunku!");
+        if ((pieceColor === "1" && dest > selectedPoint) || (pieceColor === "2" && dest < selectedPoint)) {
+            alert("Nie możesz ruszyć się wstecz!");
             return;
         }
+
+         // **Check if the piece is eligible to be moved to home**
+         if ((pieceColor === "1" && dest === 0 && selectedPoint <= 6) || 
+            (pieceColor === "2" && dest === 25 && selectedPoint >= 19)) {
+            movePieceToHome(selectedPiece, pieceColor);
+            return;
+        }
+
+         // **Check if bearing off instead of moving**
+         if ((currentPlayer === "1" && dest === 0) || (currentPlayer === "2" && dest === 25)) {
+            attemptBearOff(player);
+            return;
+        }
+
+        // **Check movement direction
+        // **if ((pieceColor === "1" && dest >= selectedPoint) || (pieceColor === "2" && dest <= selectedPoint)) {**
+            // **alert("Nie możesz przesunąć pionka w tym kierunku!");**
+            //**return;**
+        // **}**
 
         const bottomPiecesContainer = point.querySelector('.bottom-pieces');
         const targetContainer = bottomPiecesContainer ? bottomPiecesContainer : point;
 
         // **Check if the target has 2+ opponent pieces (blocked)**
         const existingPieces = targetContainer.querySelectorAll('.piece');
-        if (existingPieces.length >= 2) {
+        if (existingPieces.length >= 2 && existingPieces[0]) {
             const existingPieceColor = existingPieces[0].classList.contains('white') ? "1" : "2";
             
             if (existingPieceColor !== pieceColor) {
@@ -354,8 +589,34 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ start: selectedPoint, end: dest, player: currentPlayer, move_value: move_value, dice1Python: dice1, dice2Python: dice2 })
         })
-        .then(response => response.json())
+        .then(response => {
+          console.log("Full server response:", response);
+
+          if (!response.ok){
+            return response.text().then(errorText => {
+              console.error("Serwer error", errorTest);
+              throw new Error(`Błąd serwera: ${errorText}`);
+            });
+          }
+          return response.json().then(data => {
+            console.log("JSON data reveived:", data);
+            return data;
+          }).catch(err => {
+            console.error("Błąd: Serwer nie zwrócił poprawnego JSON", err);
+            throw new Error("Błą: Serwe nie zwrócił poprawnego JSON");
+          });
+        })
         .then(data => {
+    console.log("Debugging: Full data received from server:", data);
+
+    if (!data || typeof data !== "object") {
+        throw new Error("Błąd: Serwer nie zwrócił poprawnej odpowiedzi (brak danych lub nieprawidłowy format).");
+    }
+
+    if (!data.message) {
+        throw new Error("Błąd: Brak oczekiwanej odpowiedzi z serwera.");
+    }
+
             alert(data.message);
             movePiece(selectedPiece, point);
 
@@ -376,10 +637,17 @@
             selectedPoint = null;
             document.querySelectorAll('.point').forEach(p => p.classList.remove('selected'));
         })
-        .catch(err => console.error('Błąd:', err));
+        .catch(err => console.error('Błąd:', err.message));
     });
 });
 
+// **Move Piece to Home Function**
+function movePieceToHome(piece, player) {
+    const homeArea = document.getElementById(player === "1" ? "home1" : "home2");
+    homeArea.appendChild(piece);
+    piece.dataset.position = "home";
+    alert(`Gracz ${player} usunął pionek do domu!`);
+}
 
 // **Function to send captured piece to the captured area**
 function sendPieceToCapturedArea(piece) {
